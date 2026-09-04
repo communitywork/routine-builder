@@ -52,6 +52,7 @@ def validate_inputs(
     experience_level: str,
     days_per_week: int,
     equipment_access: Union[str, List[str]],
+    session_duration_mins: int = 45,
 ) -> Tuple[bool, Optional[str]]:
     """
     Validates structured user inputs before sending to the LLM.
@@ -61,6 +62,7 @@ def validate_inputs(
         experience_level (str): User experience (Beginner, Intermediate, Advanced).
         days_per_week (int): Training days per week (must be 1-7).
         equipment_access (Union[str, List[str]]): Available gear or facility.
+        session_duration_mins (int): Target session duration in minutes.
 
     Returns:
         Tuple[bool, Optional[str]]: (is_valid, error_message_if_invalid)
@@ -73,6 +75,9 @@ def validate_inputs(
 
     if not isinstance(days_per_week, int) or days_per_week < 1 or days_per_week > 7:
         return False, f"Days available per week must be between 1 and 7 (received: {days_per_week})."
+
+    if not isinstance(session_duration_mins, int) or session_duration_mins < 1:
+        return False, "It doesn't make sense to have 0 target session minutes. Please select a duration greater than 0."
 
     if isinstance(equipment_access, list):
         if len(equipment_access) == 0:
@@ -217,6 +222,7 @@ def generate_workout_plan(
         experience_level=experience_level,
         days_per_week=days_per_week,
         equipment_access=equipment_access,
+        session_duration_mins=session_duration_mins,
     )
     if not is_valid:
         return False, validation_err or "Invalid input parameters."
