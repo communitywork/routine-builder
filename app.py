@@ -206,8 +206,8 @@ with content_col:
                     else:
                         with st.spinner("Finding biomechanically sound CSCS substitutes..."):
                             success, sub_res = swap_exercise(
-                                exercise_to_replace=ex_name,
-                                reason=swap_reason,
+                                current_exercise=ex_name,
+                                reason_or_preference=swap_reason,
                                 equipment_access=equipment,
                                 injuries_or_limitations=limitations,
                                 api_key=API_KEY,
