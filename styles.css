@@ -1,0 +1,228 @@
+/* Spotify Dark Theme Base */
+.stApp {
+    background-color: #121212 !important;
+}
+
+/* Hide Streamlit default sidebar to enforce 2-row in-page layout */
+[data-testid="stSidebar"] {
+    display: none !important;
+}
+.block-container {
+    padding-top: 1.5rem;
+    padding-bottom: 2.5rem;
+    max-width: 100% !important;
+    background-color: #121212 !important;
+}
+
+/* Primary buttons - Spotify green */
+button[kind="primary"] {
+    background-color: #1DB954 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 500px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    padding: 12px 32px !important;
+}
+button[kind="primary"]:hover {
+    background-color: #1ed760 !important;
+    transform: scale(1.02) !important;
+}
+
+/* Secondary buttons */
+button[kind="secondary"] {
+    background-color: transparent !important;
+    color: #ffffff !important;
+    border: 1px solid #ffffff !important;
+    border-radius: 500px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    padding: 12px 32px !important;
+}
+button[kind="secondary"]:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    transform: scale(1.02) !important;
+}
+
+/* Input fields */
+.stTextInput > div > div > input,
+.stTextArea > div > div > textarea,
+.stSelectbox > div > div > select {
+    background-color: #333333 !important;
+    color: #ffffff !important;
+    border: 1px solid #333333 !important;
+    border-radius: 4px !important;
+}
+.stTextInput > div > div > input:focus,
+.stTextArea > div > div > textarea:focus,
+.stSelectbox > div > div > select:focus {
+    border-color: #1DB954 !important;
+    box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.3) !important;
+}
+
+/* Labels and text */
+label, .stMarkdown, h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+}
+.stCaption {
+    color: #b3b3b3 !important;
+}
+
+/* Sliders */
+.stSlider > div > div > div > div {
+    background-color: #1DB954 !important;
+}
+
+/* Expander */
+.streamlit-expanderHeader {
+    background-color: #282828 !important;
+    color: #ffffff !important;
+    border: 1px solid #333333 !important;
+    border-radius: 4px !important;
+}
+.streamlit-expanderContent {
+    background-color: #282828 !important;
+    border: 1px solid #333333 !important;
+    border-radius: 4px !important;
+}
+
+/* ROW 1: Full-Page Width Top Banner */
+.top-banner {
+    background: linear-gradient(135deg, #121212 0%, #181818 50%, #282828 100%);
+    border: 1px solid rgba(29, 185, 84, 0.3);
+    border-radius: 8px;
+    padding: 22px 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    width: 100%;
+}
+.banner-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.banner-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.banner-icon {
+    font-size: 2.6rem;
+    line-height: 1;
+}
+.banner-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+}
+.banner-subtitle {
+    font-size: 0.9rem;
+    color: #b3b3b3;
+    margin: 4px 0 0 0;
+    padding: 0;
+}
+.banner-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.banner-pill {
+    background: rgba(29, 185, 84, 0.15);
+    color: #1DB954;
+    border: 1px solid rgba(29, 185, 84, 0.3);
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+/* ROW 2: Navigation Column Styling */
+.nav-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #b3b3b3;
+    margin-bottom: 6px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(29, 185, 84, 0.15);
+}
+
+/* Nav buttons: target all secondary buttons inside the left column container */
+[data-testid="column"]:first-child button[data-testid="stBaseButton-secondary"] {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 10px 14px !important;
+    border-radius: 4px !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: #b3b3b3 !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease !important;
+    width: 100% !important;
+    text-align: left !important;
+    box-shadow: none !important;
+    margin-bottom: 0 !important;
+}
+[data-testid="column"]:first-child button[data-testid="stBaseButton-secondary"]:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: none !important;
+}
+[data-testid="column"]:first-child button[data-testid="stBaseButton-secondary"]:focus:not(:active) {
+    box-shadow: none !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+/* Active nav item indicator bar */
+.nav-active-bar {
+    height: 2px;
+    background: #1DB954;
+    border-radius: 2px;
+    margin: -6px 14px 4px 14px;
+    opacity: 1;
+}
+
+/* Metric Cards */
+.stat-box {
+    background: rgba(40, 40, 40, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 14px 18px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+.stat-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #b3b3b3;
+    margin-bottom: 4px;
+}
+.stat-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* Badges */
+.badge-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(29, 185, 84, 0.15);
+    color: #1DB954;
+    border: 1px solid rgba(29, 185, 84, 0.3);
+    margin-right: 6px;
+}
