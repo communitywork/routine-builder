@@ -78,9 +78,20 @@ source venv/bin/activate
 ```
 
 ### 3. Install Dependencies
+
+You can install dependencies using either method:
+
+**Option A: Using requirements.txt (Recommended for quick setup)**
 ```bash
 pip install -r requirements.txt
 ```
+
+**Option B: Using pyproject.toml (Modern Python packaging)**
+```bash
+pip install -e .
+```
+
+Both methods install the same dependencies. The `pyproject.toml` file provides modern Python project configuration, while `requirements.txt` offers compatibility with older tools and deployment platforms.
 
 ### 4. Configure Your Groq API Key
 Get your free Groq API key at [console.groq.com/keys](https://console.groq.com/keys).
