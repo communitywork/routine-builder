@@ -1,13 +1,12 @@
-# 📐 FitBlueprint — AI Workout Plan Generator
+# 📐 FitBlueprint — Workout Plan Generator
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Powered by Groq](https://img.shields.io/badge/Powered%20by-Groq-orange.svg)](https://groq.com)
-[![Tests Passing](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)](tests/)
 
-**FitBlueprint** is a production-grade Streamlit application that collects structured inputs about a user's fitness profile and generates a personalized, highly usable weekly workout program using large language models via the **Groq API** (featuring dynamic model discovery and CSCS biomechanical guidelines).
+**FitBlueprint** is a production-grade workout plan generator that creates personalized, science-backed weekly training programs based on your fitness goals, experience level, equipment availability, and physical limitations.
 
-Built for the **Codebasics AI Engineering Cohort** (Session 2: LLMs, Embeddings & Transformer Architecture).
+Powered by advanced AI through the **Groq API**, FitBlueprint delivers CSCS (Certified Strength and Conditioning Specialist) quality workout plans with strict adherence to your constraints and safety requirements.
 
 ---
 
@@ -51,22 +50,11 @@ routine-builder/
 ├── requirements.txt            # Project dependencies
 ├── .env.example                # Example environment file
 ├── .gitignore                  # Git ignore rules
-├── README.md                   # Project documentation & rubric alignment
+├── README.md                   # Project documentation
+├── styles.css                  # Spotify-themed custom styling
 └── tests/
     └── test_workout_generator.py # Automated test suite (validation, prompts, error handling)
 ```
-
----
-
-## 📊 Rubric Compliance
-
-| Criteria | Weight | Implementation Details |
-| :--- | :---: | :--- |
-| **App runs without crashing on empty/invalid input** | **20%** | `validate_inputs()` validates day bounds (1-7), required fields, and provides clear user-facing messages. |
-| **Structured inputs correctly passed into prompt** | **25%** | Inputs gathered via Streamlit selectbox & slider components, bound to typed arguments in `build_workout_prompt()`. |
-| **Prompt design respects constraints & usable** | **30%** | CSCS persona prompt enforces equipment rules, day count, injury-safe modifications, and structured table layouts. |
-| **Error handling (API failure, empty responses)** | **15%** | Complete `try/except` wrapping Groq calls; handles auth errors, rate limits, network outages, and blank outputs. |
-| **Code quality (type hints, readability, separation)**| **10%** | Full type hints (`typing`), modular separation (`workout_generator.py` vs `app.py`), docstrings, and unit tests. |
 
 ---
 
@@ -74,7 +62,7 @@ routine-builder/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/<your-username>/routine-builder.git
+git clone https://github.com/communitywork/routine-builder.git
 cd routine-builder
 ```
 
@@ -95,20 +83,42 @@ pip install -r requirements.txt
 ```
 
 ### 4. Configure Your Groq API Key
-You can get a free Groq API key in 30 seconds at [console.groq.com/keys](https://console.groq.com/keys).
+Get your free Groq API key at [console.groq.com/keys](https://console.groq.com/keys).
 
-You have two easy ways to provide the key:
-- **Option A (Recommended for local dev)**: Copy `.env.example` to `.env` and set your key:
+You have two options to provide the key:
+- **Option A (Recommended)**: Copy `.env.example` to `.env` and set your key:
   ```env
   GROQ_API_KEY=gsk_your_actual_groq_api_key_here
   ```
-- **Option B (Recommended for web testing / evaluators)**: Paste your key directly into the sidebar text field in the app UI.
+- **Option B**: Enter your key directly in the app's sidebar when prompted.
 
 ### 5. Run the Streamlit App
 ```bash
 streamlit run app.py
 ```
 Open your browser to `http://localhost:8501`.
+
+---
+
+## 💰 Pricing & Support
+
+### Free Version
+- Limited API calls per day
+- Access to all core features
+- Standard Groq models
+
+### Premium Access
+For unlimited access and priority support, contact us at **sales@fitblueprint.com**
+
+---
+
+## 🎨 Design & Theme
+
+FitBlueprint features a modern Spotify-inspired dark theme with:
+- Dark background (#121212) for reduced eye strain
+- Green accent color (#1DB954) for primary actions
+- Clean, professional UI with rounded corners
+- Responsive design for all screen sizes
 
 ---
 
