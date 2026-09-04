@@ -8,6 +8,7 @@ with strict error handling and type annotations.
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 import locale
@@ -161,28 +162,37 @@ Create a personalized, practical, and highly structured weekly workout plan base
    {f"- MANDATORY: Because the user has reported limitations/injuries ('{limitations_str}'), you MUST include a clear medical disclaimer advising consultation with a physician or physical therapist." if has_injuries else "- Include a brief general safety disclaimer."}
 
 ### DESIRED OUTPUT FORMAT:
-Format your response using clean, professional GitHub-flavored Markdown:
+Return your response as a valid JSON object with the following structure:
 
-1. **Executive Summary & Split Design**:
-   - Program Name & Split Type (e.g. Full Body, Upper/Lower, Push/Pull/Legs)
-   - Rationale explaining why this split fits their {days_per_week}-day schedule and {fitness_goal} goal.
+```json
+{{
+  "program_name": "Program Name (e.g., Full Body, Upper/Lower, Push/Pull/Legs)",
+  "split_rationale": "Brief explanation of why this split fits the {days_per_week}-day schedule and {fitness_goal} goal",
+  "days": [
+    {{
+      "day_number": 1,
+      "title": "Day Title & Target Muscle Groups (e.g., Upper Body Strength & Posture)",
+      "warmup": ["2-3 targeted mobility drills"],
+      "exercises": [
+        {{
+          "number": 1,
+          "name": "Exercise Name",
+          "sets": "Sets (e.g., 3)",
+          "reps": "Reps/Time (e.g., 8-12)",
+          "rest": "Rest period (e.g., 60-90s)",
+          "form_cue": "Form cue / coaching note"
+        }}
+      ],
+      "cooldown": ["1-2 minutes stretch"]
+    }}
+  ],
+  "progression_guidelines": "Concrete instructions on how to progress (progressive overload, adding reps or weight)",
+  "recovery_tips": "Recovery tips (hydration, sleep, nutrition recommendations)",
+  "disclaimer": "Clear safety and medical disclaimer"
+}}
+```
 
-2. **Day-by-Day Workout Breakdown**:
-   For each of the {days_per_week} day(s), provide:
-   - **Day Title & Target Muscle Groups** (e.g., `### Day 1: Upper Body Strength & Posture`)
-   - **Quick Dynamic Warm-up** (2-3 targeted mobility drills)
-   - **Exercise Table**:
-     | # | Exercise Name | Sets | Reps / Time | Rest | Form Cue / Coaching Note |
-   - **Cool-Down / Mobility** (1-2 minutes stretch)
-
-3. **Progression & Recovery Guidelines**:
-   - Concrete instructions on how to progress (e.g., progressive overload, adding reps or weight).
-   - Recovery tips (hydration, sleep, nutrition recommendations tailored to {fitness_goal}).
-
-4. **Safety & Medical Disclaimer**:
-   - Clear, prominent disclaimer regarding physical health and exercise readiness.
-
-Produce a detailed, ready-to-use plan that a real person can take to their workout session immediately.
+Ensure the JSON is valid and can be parsed. Do not include any text outside the JSON object.
 """
     return prompt.strip()
 
@@ -295,7 +305,23 @@ def generate_workout_plan(
                 "The AI model generated a blank response. Please try clicking 'Regenerate' to try again.",
             )
 
-        return True, content.strip()
+        # Try to parse JSON response
+        try:
+            # Extract JSON from response (in case there's markdown code blocks)
+            json_str = content.strip()
+            if json_str.startswith('```json'):
+                json_str = json_str[7:]
+            if json_str.startswith('```'):
+                json_str = json_str[3:]
+            if json_str.endswith('```'):
+                json_str = json_str[:-3]
+            json_str = json_str.strip()
+
+            parsed_data = json.loads(json_str)
+            return True, json.dumps(parsed_data, indent=2)
+        except json.JSONDecodeError:
+            # If JSON parsing fails, return the raw content
+            return True, content.strip()
 
     except AuthenticationError:
         return (
