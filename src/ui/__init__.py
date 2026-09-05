@@ -7,7 +7,7 @@ from .views import (
     render_generate_routine_view,
     render_saved_routines_view,
 )
-
+ 
 __all__ = [
     "PRESETS",
     "archive_current_routine",
