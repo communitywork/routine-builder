@@ -22,39 +22,73 @@ Rather than relying on vague free-form text boxes, the app collects structured i
 - **Target Session Duration**: Slider (`20` to `90` minutes)
 
 ### 2. Personal Trainer-Grade Prompt Design
-The core engine (`workout_generator.py`) acts as a Certified Strength and Conditioning Specialist (CSCS):
+The core engine (`src/core/generator.py`) acts as a Certified Strength and Conditioning Specialist (CSCS):
 - **100% Constraint Compliance**: Equipment choices are strictly enforced (e.g., no barbells or cable machines if the user selected "Home dumbbells").
 - **Exact Frequency Match**: Generates a Day 1 through Day N plan matching the chosen days per week, with intelligent recovery distribution.
 - **Injury Adaptation & Medical Disclaimer**: Actively omits contraindicated exercises and includes a medical disclaimer whenever injuries or physical limitations are specified.
-- **Structured Markdown Tables**: Clear, clean day-by-day breakdowns with Exercise, Sets, Reps/Time, Rest, and Form Coaching Cues.
+- **JSON-Structured Output**: Plans are returned as validated JSON, rendered into rich styled exercise cards in the UI.
 
-### 3. Comprehensive Error Handling
-- **Invalid / Empty Inputs**: Validates user selections (e.g., 0 days selected, missing fields) and displays friendly Streamlit warning alerts without crashing.
-- **API Failure Resilience**: Gracefully intercepts `AuthenticationError` (bad/expired key), `RateLimitError`, `APIConnectionError` (network failure), and `APIStatusError`.
+### 3. Inline Exercise Swap
+- Each exercise card in the **Current Routine** view has a **🔄 Swap** button.
+- Clicking it opens a true modal dialog where you select a reason (e.g. joint pain, equipment unavailable).
+- The AI replaces **only that specific exercise** in the full plan, preserving all other days, sets, reps, and structure.
+
+### 4. Routine History & Saved Routines
+- Every generated or swapped plan is **automatically archived** into the Saved Routines tab before being overwritten.
+- Saved routines can be **Set as Current**, **Loaded for Modification (Swap/Regenerate)**, or **Downloaded as Markdown**.
+
+### 5. Comprehensive Error Handling
+- **Invalid / Empty Inputs**: Validates user selections and displays friendly Streamlit warning alerts.
+- **API Failure Resilience**: Gracefully intercepts `AuthenticationError`, `RateLimitError`, `APIConnectionError`, and `APIStatusError`.
 - **Empty / Malformed Responses**: Validates LLM responses and provides friendly fallback notices.
 
-### 4. 🚀 Stretch Goals Implemented
-- **🔄 Regenerate Variation**: Generate a fresh, alternative workout split while preserving user constraints.
-- **💾 Session State Persistence**: Generated workouts persist across widget interactions and reruns via `st.session_state`.
-- **📥 One-Click Export**: Download the customized routine as `.md` (Markdown) or `.txt` (Plain Text).
-- **🔀 Exercise Swap Assistant**: Select any individual exercise from the plan, state a reason/discomfort, and receive 2-3 CSCS-approved direct substitutes matching the equipment and injury constraints.
+### 6. Export
+- **📥 Download Markdown (.md)**: A fully formatted, human-readable training document.
+- **📄 Download Plain Text (.txt)**: Clean plain text version (all markdown syntax stripped).
 
 ---
 
 ## 🏗️ Architecture & Project Structure
 
+The project uses a class-based, package-oriented `src/` layout to cleanly separate concerns:
+
 ```
 routine-builder/
-├── app.py                      # Streamlit web UI and session management
-├── workout_generator.py        # Typed core logic, prompt engineering & Groq API caller
-├── requirements.txt            # Project dependencies
-├── .env.example                # Example environment file
-├── .gitignore                  # Git ignore rules
-├── README.md                   # Project documentation
-├── styles.css                  # Spotify-themed custom styling
+├── app.py                        # Minimal Streamlit entry point (~90 lines)
+├── styles.css                    # Spotify-themed dark UI design system
+├── requirements.txt              # Project dependencies
+├── pyproject.toml                # Modern Python project configuration
+├── .env.example                  # Example environment file
+├── .gitignore                    # Git ignore rules
+├── README.md                     # Project documentation
+├── src/
+│   ├── __init__.py
+│   ├── core/
+│   │   ├── config.py             # Environment, constants, model registry
+│   │   ├── prompts.py            # All LLM prompt-building logic
+│   │   └── generator.py          # WorkoutGenerator class (Groq API wrapper)
+│   ├── ui/
+│   │   ├── state.py              # Session state init, PRESETS, archive helper
+│   │   ├── components.py         # display_workout_plan(), swap_exercise_dialog()
+│   │   └── views.py              # render_*_view() functions for each nav section
+│   └── utils/
+│       └── formatting.py         # format_plan_as_markdown(), format_plan_as_text()
 └── tests/
-    └── test_workout_generator.py # Automated test suite (validation, prompts, error handling)
+    └── test_workout_generator.py  # Automated test suite
 ```
+
+### Module Responsibilities
+
+| Module | Responsibility |
+|---|---|
+| `app.py` | Page config, CSS, banner, nav sidebar, view router |
+| `src/core/config.py` | Model registry, `get_api_key()`, `get_model_name()` |
+| `src/core/prompts.py` | `build_workout_prompt()`, `build_swap_prompt()` |
+| `src/core/generator.py` | `WorkoutGenerator` class — `generate_plan()`, `replace_exercise()` |
+| `src/ui/state.py` | `init_session_state()`, `PRESETS`, `archive_current_routine()` |
+| `src/ui/components.py` | Exercise card renderer, `@st.dialog` swap modal |
+| `src/ui/views.py` | `render_current_routine_view()`, `render_generate_routine_view()`, etc. |
+| `src/utils/formatting.py` | Pure Python JSON → Markdown / Plain Text converters |
 
 ---
 
@@ -79,8 +113,6 @@ source venv/bin/activate
 
 ### 3. Install Dependencies
 
-You can install dependencies using either method:
-
 **Option A: Using requirements.txt (Recommended for quick setup)**
 ```bash
 pip install -r requirements.txt
@@ -91,17 +123,14 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-Both methods install the same dependencies. The `pyproject.toml` file provides modern Python project configuration, while `requirements.txt` offers compatibility with older tools and deployment platforms.
-
 ### 4. Configure Your Groq API Key
 Get your free Groq API key at [console.groq.com/keys](https://console.groq.com/keys).
 
-You have two options to provide the key:
-- **Option A (Recommended)**: Copy `.env.example` to `.env` and set your key:
-  ```env
-  GROQ_API_KEY=gsk_your_actual_groq_api_key_here
-  ```
-- **Option B**: Enter your key directly in the app's sidebar when prompted.
+Copy `.env.example` to `.env` and set your key:
+```env
+GROQ_API_KEY=gsk_your_actual_groq_api_key_here
+GROQ_MODEL=llama-3.3-70b-versatile   # optional, defaults to this model
+```
 
 ### 5. Run the Streamlit App
 ```bash
@@ -126,38 +155,31 @@ For unlimited access and priority support, contact us at **sales@fitblueprint.co
 ## 🎨 Design & Theme
 
 FitBlueprint features a modern Spotify-inspired dark theme with:
-- Dark background (#121212) for reduced eye strain
-- Green accent color (#1DB954) for primary actions
-- Clean, professional UI with rounded corners
-- Responsive design for all screen sizes
+- Dark background (`#121212`) for reduced eye strain
+- Green accent color (`#1DB954`) for primary actions and cards
+- Animated exercise cards with hover-lift effects
+- Glassmorphism stat boxes and badge pills
+- Responsive two-column layout (navigation + content)
 
 ---
 
 ## 🧪 Running Automated Tests
 
-Run the unit test suite to verify validation, prompt generation, and error handling:
 ```bash
 python -m unittest discover tests
-```
-Output:
-```
-.........
-----------------------------------------------------------------------
-Ran 9 tests in 1.07s
-
-OK
 ```
 
 ---
 
 ## 💡 Prompt Engineering Approach
 
-The prompt design uses a **Role + Context + Constraint + Schema** framework:
+The prompt design in `src/core/prompts.py` uses a **Role + Context + Constraint + Schema** framework:
 
-1. **Role Definition**: Assigns the model the role of an elite CSCS coach, setting high standards for exercise selection, rep ranges, and rest intervals.
+1. **Role Definition**: Assigns the model the role of an elite CSCS coach.
 2. **Strict Negative Constraints**: Explicitly warns the model against prescribing equipment outside what the user specified.
-3. **Condition-Specific Routing**: If injuries or limitations are provided, the prompt instructs the model to omit contraindicated movements and attach safety coaching cues to the affected muscle groups.
-4. **Structured Output Enforcement**: Instructs the model to generate day-by-day markdown tables (`| Exercise | Sets | Reps | Rest | Notes |`) rather than walls of text.
+3. **Condition-Specific Routing**: If injuries or limitations are provided, the prompt instructs the model to omit contraindicated movements and attach safety cues.
+4. **JSON Schema Enforcement**: Instructs the model to return a fully structured JSON object (not markdown tables), which is then parsed, validated, and rendered as rich UI cards.
+5. **Variation Seeding**: The regenerate endpoint injects a `variation_seed_hint` that nudges the model to produce a meaningfully different split.
 
 ---
 
